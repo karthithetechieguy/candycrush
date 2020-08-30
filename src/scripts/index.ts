@@ -1,7 +1,8 @@
+const TIME_LIMIT = 1;
 document.addEventListener('DOMContentLoaded', function () {
     const grid = document.querySelector('.grid');
     const width = 8;
-    const maxScoreReached = 100;
+    // const maxScoreReached = 100;
     const squares: HTMLDivElement[] = [];
     const scoreDisplay = document.getElementById('score');
     let score = 0;
@@ -203,16 +204,100 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     // check max score and exit
-    function checkMaxScoreReached() {
-        if (score > maxScoreReached) {
-            alert('game over, congrats');
-            score = 0;
+    // function checkMaxScoreReached() {
+    //     if (score > maxScoreReached) {
+    //         alert('game over, congrats');
+    //         score = 0;
+    //     }
+    // }
+    let timer: number;
+    let startTime: number;
+    let minutes: string;
+    let seconds: string;
+    let timeElapsedMinutes: number;
+    function start() {
+        const findStartTime: string =
+            localStorage.getItem('startTime')?.toString() ||
+            Date.now().toString();
+        startTime = parseInt(findStartTime);
+        localStorage.setItem(
+            'startTime',
+            startTime.toString()
+        );
+        timer = window.setInterval(() => {
+            clockTick();
+        }, 100);
+    }
+
+    function clockTick() {
+        const currentTime: number = Date.now();
+        const timeElapsed: Date = new Date(
+            currentTime - startTime
+        );
+        // let hours: number = timeElapsed.getUTCHours();
+        timeElapsedMinutes =
+            TIME_LIMIT - timeElapsed.getUTCMinutes() - 1;
+        const timeElapsedSeconds =
+            60 - timeElapsed.getUTCSeconds();
+        // const timeElapsedMs = timeElapsed.getUTCMilliseconds();
+        minutes =
+            timeElapsedMinutes > 9
+                ? timeElapsedMinutes.toString()
+                : '0' + timeElapsedMinutes.toString();
+        seconds =
+            timeElapsedSeconds > 9
+                ? timeElapsedSeconds.toString()
+                : '0' + timeElapsedSeconds.toString();
+        // const ms: string =
+        //     timeElapsedMs > 9
+        //         ? timeElapsedMs.toString()
+        //         : '0' + timeElapsedMs.toString();
+        const display = document.getElementById('timer');
+
+        if (display?.innerHTML) {
+            display.innerHTML = minutes + ' : ' + seconds;
         }
     }
+    function stop() {
+        alert('Game Over. Your score is ' + score);
+        const display = document.getElementById('timer');
+        if (display?.innerHTML) {
+            display.innerHTML = TIME_LIMIT + ' : 00';
+        }
+        if (scoreDisplay) {
+            score = 0;
+            scoreDisplay.innerHTML = score.toString();
+        }
+        clearInterval(timer);
+        localStorage.removeItem('startTime');
+        start();
+    }
+    start();
+    const stopTimer = document.getElementById('stopTimer');
+    if (stopTimer) {
+        stopTimer.addEventListener('click', function () {
+            if (
+                confirm(
+                    'Are you sure you want to cancel the game?'
+                )
+            ) {
+                stop();
+            }
+        });
+    }
+
+    function newGameWhenTimeOut() {
+        if (timeElapsedMinutes < 0) {
+            timeElapsedMinutes = 0;
+            stop();
+        }
+    }
+
     setInterval(() => {
+        newGameWhenTimeOut();
         matchingRowCandy();
         matchingColumnCandy();
-        checkMaxScoreReached();
+        // checkMaxScoreReached();
         moveDown();
     }, 100);
 });

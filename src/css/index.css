@@ -41,7 +41,7 @@ h3 {
     opacity: 0.8;
     justify-content: space-between;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) inset, 0 1px 0 #fff;
-    
+
 }
 
 .score {
@@ -49,4 +49,36 @@ h3 {
     text-transform: uppercase;
     font-size: 28px;
     color: lightcyan;
+}
+
+.timerCard
+{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    padding: 4vh;
+    font-family: "Montserrat", sans-serif;
+    text-transform: uppercase;
+    font-size: 28px;
+    color: lightcyan;
+
+
+}
+#stopTimer {
+    border: none;
+    outline: none;
+    padding: 0.5vw;
+}
+
+.stopBtn
+{
+    display: flex;
+}
+
+@media only screen and (max-width:600px)
+{
+    body
+    {
+        flex-direction: column;
+    }
 }
